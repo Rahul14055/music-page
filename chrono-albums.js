@@ -547,12 +547,15 @@
     let nodes, cards, pivot, floor;
 
     if (portrait) {
-      const railX = w * 0.16;
+      const isNarrow = w < 560;
+      const railX = isNarrow ? w * 0.12 : w * 0.16;
       const top = h * 0.22;
       const step = h * (0.46 / Math.max(1, count - 1));
       nodes = REF.nodes.map((_, i) => [railX, top + i * step]);
-      const cw = Math.min(w * 0.65, 290);
-      cards = REF.cards.map((_, i) => ({ x: w * 0.60, y: h * 0.50, w: cw, i }));
+      const cw = Math.min(w * (isNarrow ? 0.75 : 0.65), 320);
+      const cardX = isNarrow ? w * 0.54 : w * 0.60;
+      const cardY = h * 0.48;
+      cards = REF.cards.map((_, i) => ({ x: cardX, y: cardY, w: cw, i }));
       pivot = [w * 0.52, h * 0.08];
       floor = [w * 0.5, h * 0.965];
     } else {
@@ -964,26 +967,38 @@
     function place() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const L = chrono.resize(window.innerWidth, window.innerHeight, dpr);
-      const portrait = L.portrait;
+      const isMobile = window.innerWidth <= 768 || L.portrait;
 
       for (let i = 0; i < cards.length; i++) {
         const c = L.cards[i];
         const el = cards[i];
-        el.style.width = `${c.w}px`;
-        el.style.left = `${c.x}px`;
-        el.style.top = `${c.y}px`;
 
-        // Card leans with the tangent of the arc, exactly as before
-        const tilt = portrait ? 0 : (L.angles[i] - L.angles[L.angles.length - 1]) * 14;
-        el.style.setProperty('--tilt', `${tilt.toFixed(2)}deg`);
-        el.style.setProperty('--depth', String(i));
+        if (isMobile) {
+          el.style.width = '';
+          el.style.left = '';
+          el.style.top = '';
+          el.style.transform = '';
+          el.style.setProperty('--tilt', '0deg');
+          el.style.setProperty('--depth', String(i));
+          labels[i].style.left = '';
+          labels[i].style.top = '';
+        } else {
+          el.style.width = `${c.w}px`;
+          el.style.left = `${c.x}px`;
+          el.style.top = `${c.y}px`;
 
-        const n = L.nodes[i];
-        labels[i].style.left = `${n[0]}px`;
-        labels[i].style.top = `${n[1]}px`;
-        labels[i].style.fontSize = `${Math.max(14, Math.min(20, c.w * 0.088))}px`;
+          // Card leans with the tangent of the arc, exactly as before
+          const tilt = (L.angles[i] - L.angles[L.angles.length - 1]) * 14;
+          el.style.setProperty('--tilt', `${tilt.toFixed(2)}deg`);
+          el.style.setProperty('--depth', String(i));
+
+          const n = L.nodes[i];
+          labels[i].style.left = `${n[0]}px`;
+          labels[i].style.top = `${n[1]}px`;
+          labels[i].style.fontSize = `${Math.max(14, Math.min(20, c.w * 0.088))}px`;
+        }
       }
-      section.classList.toggle('is-portrait', portrait);
+      section.classList.toggle('is-portrait', isMobile);
     }
 
     place();
@@ -1022,6 +1037,108 @@
       });
     });
 
+    // Mobile Tabs
+    const tabsContainer = document.getElementById('chronoMobileTabs');
+    const tabs = ALBUMS.map((alb, i) => {
+      if (!tabsContainer) return null;
+      const tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'chrono__m-tab' + (i === chrono.active ? ' is-active' : '');
+      tab.setAttribute('role', 'tab');
+      tab.setAttribute('aria-label', `Select ${alb.title}`);
+      tab.setAttribute('aria-selected', i === chrono.active ? 'true' : 'false');
+      tab.textContent = alb.title;
+      tab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setTarget(i);
+      });
+      tabsContainer.appendChild(tab);
+      return tab;
+    });
+
+    // Mobile Navigation Controls
+    const prevBtn = document.getElementById('chronoPrevBtn');
+    const nextBtn = document.getElementById('chronoNextBtn');
+    const dotsContainer = document.getElementById('chronoDots');
+    const dots = ALBUMS.map((alb, i) => {
+      if (!dotsContainer) return null;
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'chrono__m-dot' + (i === chrono.active ? ' is-active' : '');
+      dot.setAttribute('role', 'tab');
+      dot.setAttribute('aria-label', `Go to ${alb.title}`);
+      dot.setAttribute('aria-selected', i === chrono.active ? 'true' : 'false');
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setTarget(i);
+      });
+      dotsContainer.appendChild(dot);
+      return dot;
+    });
+
+    // Initial state synchronization (guarantees Card 2/SINNER is active immediately on load)
+    cards.forEach((el, i) => {
+      const isActive = (i === chrono.active);
+      el.classList.toggle('is-active', isActive);
+      el.style.zIndex = isActive ? '20' : String(5 + i);
+    });
+    labels.forEach((el, i) => el.classList.toggle('is-active', i === chrono.active));
+    section.dataset.album = String(ALBUMS[chrono.active].title);
+    if (prevBtn) prevBtn.disabled = (chrono.active === 0);
+    if (nextBtn) nextBtn.disabled = (chrono.active === ALBUMS.length - 1);
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setTarget(Math.max(0, chrono.active - 1));
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setTarget(Math.min(ALBUMS.length - 1, chrono.active + 1));
+      });
+    }
+
+    // Touch Swipe Gesture Navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTouchActive = false;
+
+    section.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isTouchActive = true;
+      }
+    }, { passive: true });
+
+    section.addEventListener('touchmove', (e) => {
+      if (!isTouchActive || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) * 1.4 && Math.abs(dx) > 10) {
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+
+    section.addEventListener('touchend', (e) => {
+      if (!isTouchActive) return;
+      isTouchActive = false;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+
+      if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0) {
+          setTarget(Math.min(ALBUMS.length - 1, chrono.active + 1));
+        } else {
+          setTarget(Math.max(0, chrono.active - 1));
+        }
+      }
+    }, { passive: true });
+
     let lastActive = -1;
     const frame = (now) => {
       if (!state.running) return;
@@ -1055,6 +1172,24 @@
           });
           labels.forEach((el, i) => el.classList.toggle('is-active', i === chrono.active));
           section.dataset.album = String(ALBUMS[chrono.active].title);
+
+          // Update mobile controls state
+          if (prevBtn) prevBtn.disabled = (chrono.active === 0);
+          if (nextBtn) nextBtn.disabled = (chrono.active === ALBUMS.length - 1);
+          dots.forEach((dot, idx) => {
+            if (dot) {
+              const isAct = (idx === chrono.active);
+              dot.classList.toggle('is-active', isAct);
+              dot.setAttribute('aria-selected', isAct ? 'true' : 'false');
+            }
+          });
+          tabs.forEach((tab, idx) => {
+            if (tab) {
+              const isAct = (idx === chrono.active);
+              tab.classList.toggle('is-active', isAct);
+              tab.setAttribute('aria-selected', isAct ? 'true' : 'false');
+            }
+          });
         }
       }
       state.raf = requestAnimationFrame(frame);

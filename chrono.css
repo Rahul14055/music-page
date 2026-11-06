@@ -449,47 +449,304 @@
    Portrait / Mobile Layout
    -------------------------------------------------------------------------- */
 
-.chrono.is-portrait .chrono__deck { perspective: none; }
-
-.chrono.is-portrait .yr {
-  transform:
-    translate(-50%, -50%)
-    translateY(calc((1 - var(--near, 0)) * 24px))
-    scale(calc(0.94 + 0.06 * var(--near, 0)));
-  opacity: calc(var(--in, 1) * max(0, var(--near, 0) * 3 - 2));
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+/* --------------------------------------------------------------------------
+   Mobile Controls & Indicators
+   -------------------------------------------------------------------------- */
+.chrono__mobile-tabs {
+  display: none;
 }
 
-.chrono.is-portrait .yr.is-active {
+.chrono__mobile-ctrls {
+  display: none;
+  position: absolute;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 25;
   pointer-events: auto;
+  background: rgba(6, 3, 9, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 240, 224, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(63, 240, 224, 0.15);
 }
 
-.chrono.is-portrait .yr-tag {
-  transform: translate(-50%, -50%) scale(calc(0.9 + 0.2 * var(--near, 0)));
-  padding: 12px 16px;
-  margin: -12px -16px;
-  pointer-events: auto;
+.chrono__m-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(63, 240, 224, 0.3);
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  opacity: calc(var(--in, 0) * (0.4 + 0.6 * var(--near, 0)));
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.chrono__m-btn:active {
+  transform: scale(0.92);
+  background: var(--cyan);
+  color: #060309;
+}
+.chrono__m-btn:disabled {
+  opacity: 0.25;
+  pointer-events: none;
 }
 
-.chrono.is-portrait .chrono__hint {
-  top: auto;
-  bottom: clamp(20px, 4.5vh, 48px);
+.chrono__m-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chrono__m-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(244, 241, 251, 0.25);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.3s ease;
+}
+.chrono__m-dot.is-active {
+  width: 24px;
+  border-radius: 999px;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
 }
 
+.hint-mobile { display: none; }
+.hint-desktop { display: inline; }
+
+/* --------------------------------------------------------------------------
+   Responsive Mobile Viewport Overrides (<= 768px)
+   -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .chrono {
-    min-height: 100vh;
     min-height: 100svh;
-    height: 100svh;
+    min-height: 100dvh;
+    height: auto;
+    overflow: visible;
+    padding: 75px 16px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
-  .chrono__rail { display: none; }
-  .chrono__note--bl { display: none; }
+
+  .chrono__pin {
+    position: relative;
+    height: auto;
+    min-height: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
+    background: none;
+  }
+
+  #chronoStage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .chrono__header-wrap {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
   .chrono__title {
-    top: 75px;
-    font-size: 26px;
+    position: static;
+    transform: none;
+    opacity: 1;
+    margin: 0 auto;
+    text-align: center;
+    max-width: none;
+    font-size: clamp(26px, 7vw, 34px);
+    line-height: 1.05;
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 20px rgba(63, 240, 224, 0.4);
+  }
+  .chrono__title span {
+    display: inline;
+    margin-right: 5px;
+  }
+  .chrono__title em {
+    display: block;
+    font-size: 11px;
+    margin-top: 6px;
+    letter-spacing: 0.22em;
+    font-family: var(--font-body, "Space Grotesk", sans-serif);
+  }
+
+  .chrono__mobile-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    z-index: 15;
+    width: 100%;
+  }
+
+  .chrono__m-tab {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--font-body, "Space Grotesk", sans-serif);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(63, 240, 224, 0.25);
+    background: rgba(6, 3, 9, 0.8);
+    color: var(--ink-dim);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.25s ease;
+  }
+  .chrono__m-tab.is-active {
+    border-color: var(--cyan);
+    background: rgba(63, 240, 224, 0.18);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(63, 240, 224, 0.4);
+  }
+
+  .chrono__deck {
+    position: relative;
+    width: 100%;
+    max-width: 330px;
+    height: 485px;
+    margin: 0 auto;
+    perspective: none;
+    z-index: 15;
+    pointer-events: auto;
+  }
+
+  .yr {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    z-index: 5 !important;
+  }
+
+  .yr.is-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 20 !important;
+    transform: none !important;
+  }
+
+  .yr__frame {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(165deg, rgba(25, 12, 42, 0.98), rgba(6, 3, 9, 0.99));
+  }
+
+  .yr__art-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 220px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .yr__body {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .yr__title {
+    font-size: 22px;
+  }
+
+  .yr__key {
+    font-size: 10px;
+  }
+
+  .yr__lines {
+    margin-top: 6px;
+    gap: 4px;
+  }
+  .yr__lines i {
+    font-size: 9px;
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .yr__action {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 10px;
+  }
+
+  .chrono__mobile-ctrls {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 20;
+  }
+
+  /* Hide desktop arc elements on mobile */
+  .chrono__rail,
+  .chrono__hint,
+  .chrono__note--bl,
+  .chrono__note--br,
+  .yr-tag {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chrono {
+    padding: 68px 12px 40px;
+  }
+  .chrono__title {
+    font-size: 24px;
+  }
+  .chrono__deck {
+    max-width: 310px;
+    height: 460px;
+  }
+  .yr__art-wrap {
+    max-height: 200px;
   }
 }
 

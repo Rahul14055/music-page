@@ -30,14 +30,25 @@ ScrollTrigger.create({
 
 const navBurger = document.getElementById('navBurger');
 const navMobile = document.getElementById('navMobile');
-navBurger.addEventListener('click', () => {
-  navBurger.classList.toggle('open');
-  navMobile.classList.toggle('open');
-});
-navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  navBurger.classList.remove('open');
-  navMobile.classList.remove('open');
-}));
+
+function toggleMobileNav(forceState) {
+  if (!navMobile || !navBurger) return;
+  const isOpen = forceState !== undefined ? forceState : !navMobile.classList.contains('open');
+  navBurger.classList.toggle('open', isOpen);
+  navMobile.classList.toggle('open', isOpen);
+  navBurger.setAttribute('aria-expanded', String(isOpen));
+  document.body.classList.toggle('menu-open', isOpen);
+}
+
+if (navBurger && navMobile) {
+  navBurger.addEventListener('click', () => toggleMobileNav());
+  navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMobileNav(false)));
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMobile.classList.contains('open')) {
+      toggleMobileNav(false);
+    }
+  });
+}
 
 /* ============================================
    HERO — Three.js 3D wireframe orb
@@ -52,6 +63,10 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 8);
 
+  // Group holding the orb layers — MUST be initialized before setSize()
+  const group = new THREE.Group();
+  scene.add(group);
+
   function setSize() {
     const heroEl = document.querySelector('.hero') || canvas.parentElement;
     const w = heroEl ? heroEl.clientWidth : window.innerWidth;
@@ -59,12 +74,13 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+
+    const isMobile = w < 640;
+    const s = isMobile ? 0.65 : 1.0;
+    group.scale.set(s, s, s);
+    group.position.y = isMobile ? 0.22 : 0;
   }
   setSize();
-
-  // Group holding the orb layers
-  const group = new THREE.Group();
-  scene.add(group);
 
   // Core icosahedron wireframe
   const coreGeo = new THREE.IcosahedronGeometry(2.1, 2);
@@ -99,8 +115,8 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   const inner = new THREE.Mesh(innerGeo, innerMat);
   group.add(inner);
 
-  // Particle field
-  const particleCount = window.innerWidth < 700 ? 260 : 600;
+  // Particle field (optimized count for smooth mobile 60-120fps)
+  const particleCount = window.innerWidth < 700 ? 180 : 600;
   const particleGeo = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
   for (let i = 0; i < particleCount; i++) {
@@ -121,17 +137,118 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   const particles = new THREE.Points(particleGeo, particleMat);
   scene.add(particles);
 
-  // Mouse parallax target
-  let targetRotX = 0, targetRotY = 0;
-  let mouseX = 0, mouseY = 0;
+  // ============================================
+  // Interactive Controls: Mouse, Gyroscope Tilt & Touch
+  // ============================================
+  let targetInputX = 0, targetInputY = 0;
+  let currentTiltX = 0, currentTiltY = 0;
+  let hasGyro = false;
+  let hintDismissed = false;
+
+  function dismissTiltHint() {
+    if (hintDismissed) return;
+    hintDismissed = true;
+    const hint = document.getElementById('heroTiltHint');
+    if (hint) {
+      hint.style.opacity = '0';
+      hint.style.pointerEvents = 'none';
+      setTimeout(() => { if (hint.parentElement) hint.remove(); }, 500);
+    }
+  }
+
+  // 1. Desktop mouse parallax
   window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    targetInputX = (e.clientX / window.innerWidth - 0.5) * 2;
+    targetInputY = (e.clientY / window.innerHeight - 0.5) * 2;
+    dismissTiltHint();
   });
 
+  // 2. Mobile Device Orientation (Gyroscope / Tilt)
+  function handleOrientation(e) {
+    if (e.gamma === null && e.beta === null) return;
+    hasGyro = true;
+
+    // gamma: left-to-right tilt in [-90, 90]
+    const gamma = Math.max(-40, Math.min(40, e.gamma || 0));
+    // beta: front-to-back tilt in [-180, 180] (natural portrait holding angle ~45 deg)
+    const beta = e.beta !== null ? e.beta : 45;
+    const betaDelta = Math.max(-35, Math.min(35, beta - 45));
+
+    targetInputX = gamma / 28;  // -1 to 1 (scaled for intuitive response)
+    targetInputY = betaDelta / 24;
+
+    dismissTiltHint();
+  }
+
+  // Register device orientation with iOS permission support
+  if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const requestGyro = () => {
+        DeviceOrientationEvent.requestPermission()
+          .then((res) => {
+            if (res === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+            }
+          })
+          .catch(() => {});
+        window.removeEventListener('touchstart', requestGyro);
+      };
+      window.addEventListener('touchstart', requestGyro, { passive: true, once: true });
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+    }
+  }
+
+  // 3. Touch Drag interaction on hero (fallback / tactile touch tilt)
+  const heroSection = document.querySelector('.hero');
+  if (heroSection) {
+    let touchStartX = 0, touchStartY = 0;
+    let isTouchActive = false;
+
+    heroSection.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isTouchActive = true;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        dismissTiltHint();
+      }
+    }, { passive: true });
+
+    heroSection.addEventListener('touchmove', (e) => {
+      if (isTouchActive && e.touches.length === 1) {
+        const dx = (e.touches[0].clientX - touchStartX) / (window.innerWidth * 0.45);
+        const dy = (e.touches[0].clientY - touchStartY) / (window.innerHeight * 0.45);
+        if (!hasGyro) {
+          targetInputX = Math.max(-1.2, Math.min(1.2, dx));
+          targetInputY = Math.max(-1.2, Math.min(1.2, dy));
+        }
+      }
+    }, { passive: true });
+
+    const endTouch = () => {
+      isTouchActive = false;
+      if (!hasGyro) {
+        gsap.to({ valX: targetInputX, valY: targetInputY }, {
+          valX: 0,
+          valY: 0,
+          duration: 1.2,
+          ease: 'power2.out',
+          onUpdate: function() {
+            targetInputX = this.targets()[0].valX;
+            targetInputY = this.targets()[0].valY;
+          }
+        });
+      }
+    };
+    heroSection.addEventListener('touchend', endTouch, { passive: true });
+    heroSection.addEventListener('touchcancel', endTouch, { passive: true });
+  }
+
   // Entrance animation
+  const isMobileInit = window.innerWidth < 640;
+  const baseScale = isMobileInit ? 0.65 : 1.0;
   group.scale.setScalar(0.001);
-  gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 2.2, ease: 'elastic.out(0.6, 0.5)', delay: 0.3 });
+  gsap.to(group.scale, { x: baseScale, y: baseScale, z: baseScale, duration: 2.2, ease: 'elastic.out(0.6, 0.5)', delay: 0.3 });
   gsap.fromTo(particles.material, { opacity: 0 }, { opacity: 0.6, duration: 2.5, delay: 0.6 });
 
   // Direct, rock-solid scroll tracking from native window.scrollY (zero desync when scrolling back up)
@@ -152,8 +269,9 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
       particles.rotation.y = t * 0.02;
     }
 
-    targetRotX += (mouseY * 0.3 - targetRotX) * 0.04;
-    targetRotY += (mouseX * 0.3 - targetRotY) * 0.04;
+    // Smooth tilt interpolation
+    currentTiltX += (targetInputX - currentTiltX) * 0.055;
+    currentTiltY += (targetInputY - currentTiltY) * 0.055;
 
     // Responsive native scroll factor — guaranteed 0 when at top of page
     const scrollY = Math.max(0, window.pageYOffset || window.scrollY || 0);
@@ -167,13 +285,30 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
       smoothScrollFactor += (targetScroll - smoothScrollFactor) * 0.15;
     }
 
-    group.rotation.x = targetRotX + Math.sin(t * 0.15) * 0.05;
-    group.rotation.y = Math.sin(t * 0.08) * 0.08 + smoothScrollFactor * 0.4;
-    group.rotation.z = targetRotY * 0.5;
+    // 3D group rotations reacting to tilt & ambient spin
+    group.rotation.x = currentTiltY * 0.45 + Math.sin(t * 0.15) * 0.05;
+    group.rotation.y = t * 0.04 + currentTiltX * 0.65 + smoothScrollFactor * 0.4;
+    group.rotation.z = -currentTiltX * 0.25;
 
-    // Anchor camera and group: ALWAYS centered behind "tyzen01" at top (y=0, z=8)
+    // Perspective parallax offset of group and particles
+    const isMobile = window.innerWidth < 640;
+    const baseY = isMobile ? 0.22 : 0;
+    group.position.x = currentTiltX * 0.4;
+    group.position.y = baseY - currentTiltY * 0.28 + smoothScrollFactor * 0.25;
     camera.position.z = 8 + smoothScrollFactor * 3.2;
-    group.position.y = smoothScrollFactor * 0.25;
+
+    particles.position.x = -currentTiltX * 0.25;
+    particles.position.y = currentTiltY * 0.2;
+
+    // Holographic 3D perspective shift on hero content
+    const heroContent = document.querySelector('.hero__content');
+    if (heroContent && !reduceMotion) {
+      const shiftX = -currentTiltX * 10;
+      const shiftY = -currentTiltY * 8;
+      const rotDegX = -currentTiltY * 4.2;
+      const rotDegY = currentTiltX * 4.2;
+      heroContent.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0) rotateX(${rotDegX}deg) rotateY(${rotDegY}deg)`;
+    }
 
     // Fade canvas cleanly as hero leaves so it never bleeds or causes ghosting
     canvas.style.opacity = String(Math.max(0, 1 - smoothScrollFactor * 1.5));
@@ -188,24 +323,29 @@ navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 /* ============================================
    Hero text reveal (load sequence)
 ============================================ */
-window.addEventListener('DOMContentLoaded', () => {
-  const tl = gsap.timeline({ delay: 0.2 });
+function revealHero() {
+  const tl = gsap.timeline({ delay: 0.1 });
   tl.to('.hero__eyebrow', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
     .to('.hero__title-line', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.3')
     .to('.hero__title-accent', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.8')
     .to('.hero__tagline', { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
-    .to('.hero__actions', { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
-    .to('.hero__scroll-cue', { opacity: 1, duration: 0.6 }, '-=0.3');
-});
+    .to('.hero__actions', { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5');
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', revealHero);
+} else {
+  revealHero();
+}
 
 /* ============================================
    Generic scroll reveals
 ============================================ */
 gsap.utils.toArray('.about__text, .about__gallery').forEach((el) => {
-  gsap.fromTo(el, { opacity: 0, y: 60 }, {
-    opacity: 1, y: 0, duration: 1,
+  gsap.fromTo(el, { opacity: 0, y: 40 }, {
+    opacity: 1, y: 0, duration: 0.9,
     ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 80%' }
+    scrollTrigger: { trigger: el, start: 'top 85%' }
   });
 });
 
@@ -317,8 +457,10 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
       const target = document.querySelector(id);
       if (target) {
         e.preventDefault();
-        const y = target.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        const navH = nav ? nav.offsetHeight : 70;
+        const offset = (id === '#top') ? 0 : (navH - 6);
+        const y = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       }
     }
   });

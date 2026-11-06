@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>./</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>profile.jpeg</image:loc>
+      <image:title>Rahul R. (tyzen01) Artist Portrait</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>./#about</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>profile2.jpeg</image:loc>
+      <image:title>Rahul R. Lyricist and Melody Composer</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>./#albums</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>lost-in-abyss-cover.jpg</image:loc>
+      <image:title>Lost in Abyss Album Cover</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>cloud9-cover.jpg</image:loc>
+      <image:title>Cloud 9 Album Cover</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>sinner-cover.jpeg</image:loc>
+      <image:title>Sinner Album Cover</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>cover.jpeg</image:loc>
+      <image:title>Singles Collection Cover</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>./#contact</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
+
