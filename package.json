@@ -1,0 +1,25 @@
+{
+  "name": "tyzen01-portfolio",
+  "version": "1.0.0",
+  "description": "tyzen01 — Composer & Producer Music Artist Cinematic Portfolio",
+  "main": "index.html",
+  "scripts": {
+    "start": "python serve.py 5173",
+    "dev": "python serve.py 5173",
+    "serve": "npx serve -l 5173 .",
+    "open": "python serve.py 5173 --open",
+    "preview": "python -m http.server 5173"
+  },
+  "keywords": [
+    "portfolio",
+    "music-artist",
+    "webgl",
+    "threejs",
+    "gsap",
+    "audio-player",
+    "discography"
+  ],
+  "author": "Rahul R. (tyzen01)",
+  "license": "MIT"
+}
+

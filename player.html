@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Works &amp; Player — TYZEN01</title>
+<meta name="description" content="Explore and listen to all studio demo tracks by TYZEN01. Features enlarged interactive album art, real-time visualizer, and links to full versions on YouTube.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-player">
+
+<!-- Grain / noise overlay -->
+<div class="grain"></div>
+
+<!-- Custom cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Dynamic ambient color backdrop -->
+<div class="ambient-glow" id="ambientGlow"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav__logo">TYZEN<span>01</span></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#albums">Albums</a>
+    <a href="index.html#singles">Singles</a>
+    <a href="player.html">Works</a>
+    <a href="mailto:rahulrr1453@gmail.com">Contact</a>
+  </div>
+  <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="nav__cta">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    YouTube Channel
+  </a>
+  <button class="nav__burger" id="navBurger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="navMobile">
+  <a href="index.html">Home</a>
+  <a href="index.html#about">About</a>
+  <a href="index.html#albums">Albums</a>
+  <a href="index.html#singles">Singles</a>
+  <a href="player.html">Works</a>
+  <a href="mailto:rahulrr1453@gmail.com">Contact</a>
+  <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener">Listen on YouTube</a>
+</div>
+
+<!-- MAIN DEMO VAULT & PLAYER WRAPPER -->
+<main class="player-main">
+  <!-- Split Screen Player Stage -->
+  <section class="player-stage">
+    
+    <!-- LEFT COLUMN: Enlarged Album Art & Interactive Visuals & Controls -->
+    <aside class="player-stage__left">
+      <div class="player-deck">
+        
+        <!-- Large Vinyl & Art Showcase -->
+        <div class="album-art-stage" id="albumArtStage">
+          <div class="vinyl-disc" id="vinylDisc">
+            <div class="vinyl-grooves"></div>
+            <div class="vinyl-label" id="vinylLabel"></div>
+          </div>
+          <div class="album-art-stage__frame" id="albumArtFrame">
+            <img id="enlargedArt" src="sinner-cover.jpeg" alt="Album Cover Artwork" class="album-art-stage__img">
+            <div class="album-art-stage__glass"></div>
+            <div class="album-art-stage__tag" id="nowPlayingAlbumTag">Sinner</div>
+            
+            <!-- Post-Track Completion Blur Overlay -->
+            <div class="track-ended-overlay" id="trackEndedOverlay">
+              <div class="track-ended-content">
+                <span class="track-ended-badge">Demo Finished</span>
+                <h3 class="track-ended-title" id="trackEndedTitle">Stay Humble</h3>
+                <div class="track-ended-actions">
+                  <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="btn-ended-yt" id="trackEndedYtBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    <span>Play the full track on YT</span>
+                    <span class="redirect-arrow">&nearr;</span>
+                  </a>
+                  <button type="button" class="btn-ended-next" id="trackEndedNextBtn">
+                    <span>Skip &amp; Play Next</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4l10 8-10 8V4zM19 5v14h-2V5h2z" fill="currentColor"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Visualizer Canvas -->
+        <div class="visualizer-container">
+          <canvas id="visualizerCanvas" class="visualizer-canvas" width="600" height="90"></canvas>
+          <div class="visualizer-status">
+            <span class="visualizer-mode" id="visualizerLabel">AUDIO SPECTRUM</span>
+            <span class="visualizer-eq-icon">
+              <span></span><span></span><span></span><span></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Now Playing Information -->
+        <div class="now-playing-meta">
+          <div class="now-playing-meta__top">
+            <span class="now-playing-status" id="trackStatusBadge">NOW PLAYING</span>
+            <span class="now-playing-trackno" id="trackNumberBadge">TRACK 01</span>
+          </div>
+          <h2 class="now-playing-title" id="nowPlayingTitle">Stay Humble</h2>
+          <p class="now-playing-album" id="nowPlayingAlbum">From the album <strong>Sinner</strong></p>
+        </div>
+
+        <!-- Interactive Player Controls -->
+        <div class="deck-controls">
+          
+          <!-- Seek / Progress Bar -->
+          <div class="deck-progress">
+            <div class="deck-progress__timestamps">
+              <span id="currentTimeDisplay">0:00</span>
+              <span id="durationTimeDisplay">0:30</span>
+            </div>
+            <div class="deck-progress__track" id="progressTrack" role="slider" aria-label="Playback progress" tabindex="0">
+              <div class="deck-progress__fill" id="progressFill"></div>
+              <div class="deck-progress__handle" id="progressHandle"></div>
+            </div>
+          </div>
+
+          <!-- Control Buttons (Prev, Play/Pause, Next, Shuffle, Repeat) -->
+          <div class="deck-buttons">
+            <button class="deck-btn deck-btn--sub" id="btnShuffle" title="Shuffle" aria-label="Shuffle tracks">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            </button>
+
+            <button class="deck-btn deck-btn--nav" id="btnPrev" title="Previous Track (Left Arrow)" aria-label="Previous track">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 20L9 12l10-8v16zM5 19V5h2v14H5z" fill="currentColor"/></svg>
+            </button>
+
+            <button class="deck-btn deck-btn--play" id="btnPlayPause" title="Play/Pause (Space)" aria-label="Play">
+              <svg id="deckIconPlay" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+              <svg id="deckIconPause" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none"><rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/></svg>
+            </button>
+
+            <button class="deck-btn deck-btn--nav" id="btnNext" title="Next Track (Right Arrow)" aria-label="Next track">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 4l10 8-10 8V4zM19 5v14h-2V5h2z" fill="currentColor"/></svg>
+            </button>
+
+            <button class="deck-btn deck-btn--sub" id="btnRepeat" title="Repeat" aria-label="Repeat track">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </button>
+          </div>
+
+          <!-- Volume & Full YouTube Action -->
+          <div class="deck-secondary">
+            <!-- Volume slider -->
+            <div class="deck-volume">
+              <button class="deck-vol-btn" id="btnMute" aria-label="Toggle mute">
+                <svg id="iconVolHigh" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <svg id="iconVolMuted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              </button>
+              <input type="range" class="deck-vol-slider" id="volSlider" min="0" max="1" step="0.01" value="0.85" aria-label="Volume">
+            </div>
+
+            <!-- Main Full Version Button on Deck -->
+            <a href="https://www.youtube.com/playlist?list=PLR1DMr_gwB-s" target="_blank" rel="noopener" class="deck-yt-btn" id="deckFullVerLink">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>Play Full Version on YouTube &rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- RIGHT COLUMN: Demo Tracks Library & List -->
+    <section class="player-stage__right">
+      <div class="library-box">
+        
+        <!-- Controls Bar: Filter Chips + Search Input -->
+        <div class="library-toolbar">
+          
+          <!-- Filter Tabs -->
+          <div class="album-filter-chips" id="filterChips">
+            <button class="filter-chip is-active" data-filter="all">All Tracks <span class="filter-count" id="countAll">0</span></button>
+            <button class="filter-chip" data-filter="Sinner">Sinner <span class="filter-count" id="countSinner">0</span></button>
+            <button class="filter-chip" data-filter="Cloud 9">Cloud 9 <span class="filter-count" id="countCloud9">0</span></button>
+            <button class="filter-chip" data-filter="Lost in Abyss">Lost in Abyss <span class="filter-count" id="countLost">0</span></button>
+            <button class="filter-chip" data-filter="Singles">Singles <span class="filter-count" id="countSingles">0</span></button>
+          </div>
+
+          <!-- Search Box -->
+          <div class="library-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="trackSearchInput" placeholder="Search by track title..." aria-label="Search demo tracks">
+            <button class="search-clear" id="searchClearBtn" aria-label="Clear search" style="display:none">&times;</button>
+          </div>
+
+        </div>
+
+        <!-- Songs List Container -->
+        <div class="library-list-wrapper">
+          <div class="library-list-head">
+            <span class="col-head col-num">#</span>
+            <span class="col-head col-art">Cover</span>
+            <span class="col-head col-title">Title &amp; Album</span>
+            <span class="col-head col-action">Full Version</span>
+          </div>
+
+          <div class="library-list" id="libraryList">
+            <!-- Dynamic rows rendered by JS -->
+            <div class="library-loading">
+              <div class="loading-spinner"></div>
+              <p>Loading demo vault tracks...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vault Footer Callout -->
+        <div class="vault-callout">
+          <div class="vault-callout__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <div class="vault-callout__text">
+            <h4>Want more beats, mixes and full discography tracks?</h4>
+            <p>Subscribe to TYZEN01 on YouTube or reach out directly for collaborations.</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="btn btn--primary btn--sm">
+              <span>Subscribe &rarr;</span>
+            </a>
+            <a href="mailto:rahulrr1453@gmail.com" class="btn btn--ghost btn--sm">
+              <span>Contact Me</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </section>
+</main>
+
+<footer class="footer player-footer">
+  <span class="footer__logo">TYZEN<span>01</span></span>
+  <span class="footer__tag">Create. Feel. Repeat. &mdash; Demo Vault</span>
+  <span class="footer__year">&copy; 2026</span>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="player-page.js"></script>
+</body>
+</html>

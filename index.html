@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul R. (tyzen01) — Independent Music Creator &amp; Producer</title>
+<meta name="description" content="Official portfolio of Rahul R., independent music creator behind tyzen01. Writing original lyrics, shaping melodies, and blending human creativity with AI-powered production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="chrono.css">
+</head>
+<body>
+
+<!-- Grain / noise overlay -->
+<div class="grain"></div>
+
+<!-- Custom cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Progress bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#top" class="nav__logo">tyzen<span>01</span></a>
+  <div class="nav__links">
+    <a href="#about">About</a>
+    <a href="#albums">Albums</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav__actions">
+    <a href="https://open.spotify.com/artist/7rjJADLNKk5RKndDXQrWpA?si=xJf3Ml9JRKKuRA9f1UHmeQ" target="_blank" rel="noopener" class="nav__cta nav__cta--spotify" title="Stream tyzen01 on Spotify">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      <span>Spotify</span>
+    </a>
+    <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="nav__cta" title="Listen on YouTube">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      <span>YouTube</span>
+    </a>
+  </div>
+  <button class="nav__burger" id="navBurger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="navMobile">
+  <a href="#about">About</a>
+  <a href="#albums">Albums</a>
+  <a href="#contact">Contact</a>
+  <a href="https://open.spotify.com/artist/7rjJADLNKk5RKndDXQrWpA?si=xJf3Ml9JRKKuRA9f1UHmeQ" target="_blank" rel="noopener">Stream on Spotify</a>
+  <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener">Listen on YouTube</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero__bg" id="heroBg"></div>
+  <canvas id="heroCanvas" class="hero__canvas"></canvas>
+  <div class="hero__scanlines"></div>
+  <div class="hero__vignette"></div>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow" data-reveal>Rahul R. &middot; tyzen01</p>
+    <h1 class="hero__title">
+      <span class="hero__title-line" data-split>tyzen</span><span class="hero__title-accent" data-split>01</span>
+    </h1>
+    <p class="hero__tagline" data-reveal>Turning thoughts into sound.</p>
+    <div class="hero__actions" data-reveal>
+      <a href="https://open.spotify.com/artist/7rjJADLNKk5RKndDXQrWpA?si=xJf3Ml9JRKKuRA9f1UHmeQ" target="_blank" rel="noopener" class="btn btn--spotify" title="Stream tyzen01 on Spotify">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <span>Stream on Spotify</span>
+      </a>
+      <a href="#albums" class="btn btn--primary">
+        <span>Explore Discography</span>
+      </a>
+      <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="btn btn--ghost">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <span>YouTube</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__scroll-cue" data-reveal>
+    <span>Scroll</span>
+    <div class="hero__scroll-line"><i></i></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee__track">
+    <span>RAHUL R.</span><span>&middot;</span><span>tyzen01</span><span>&middot;</span><span>CLOUD 9</span><span>&middot;</span><span>LOST IN ABYSS</span><span>&middot;</span><span>SINNER</span><span>&middot;</span><span>SINGLES</span><span>&middot;</span>
+    <span>RAHUL R.</span><span>&middot;</span><span>tyzen01</span><span>&middot;</span><span>CLOUD 9</span><span>&middot;</span><span>LOST IN ABYSS</span><span>&middot;</span><span>SINNER</span><span>&middot;</span><span>SINGLES</span><span>&middot;</span>
+  </div>
+</div>
+
+<!-- ABOUT / ARTIST SPOTLIGHT (DUAL PHOTOS) -->
+<section class="about" id="about">
+  <div class="about__gallery" data-parallax>
+    <!-- Primary Studio Photo (tyzen01) -->
+    <div class="about__photo-card about__photo-card--primary">
+      <div class="about__photo-frame">
+        <img src="profile.jpeg" alt="tyzen01 artist portrait" loading="lazy">
+        <div class="about__photo-glitch"></div>
+        <div class="about__photo-corner about__photo-corner--tl"></div>
+        <div class="about__photo-corner about__photo-corner--br"></div>
+      </div>
+      <div class="about__photo-tag">
+        <span class="photo-tag__dot"></span>
+        <span class="photo-tag__title">01 &bull; tyzen01 (Hybrid Sound Design)</span>
+      </div>
+    </div>
+
+    <!-- Secondary Editorial Photo (Rahul R.) -->
+    <div class="about__photo-card about__photo-card--secondary">
+      <div class="about__photo-frame">
+        <img src="profile2.jpeg" alt="Rahul R. portrait" loading="lazy">
+        <div class="about__photo-glitch about__photo-glitch--cyan"></div>
+        <div class="about__photo-corner about__photo-corner--tr"></div>
+        <div class="about__photo-corner about__photo-corner--bl"></div>
+      </div>
+      <div class="about__photo-tag">
+        <span class="photo-tag__dot photo-tag__dot--cyan"></span>
+        <span class="photo-tag__title">02 &bull; Rahul R. (Lyricist &amp; Melody)</span>
+      </div>
+    </div>
+
+    <div class="about__gallery-ring"></div>
+  </div>
+
+  <div class="about__text">
+    <p class="section-label">01 &mdash; About the Artist</p>
+    <h2 class="about__heading">
+      Rahul R.<br><em>Behind tyzen01</em>
+    </h2>
+    <span class="about__badge">Independent Music Creator &bull; Lyricist &bull; Hybrid Producer</span>
+
+    <p class="about__body">
+      I’m <strong>Rahul R.</strong>, an independent music creator and the artist behind <strong>tyzen01</strong>. Every track begins with real human intuition &mdash; writing my own lyrics, shaping evocative melodies, and bringing musical ideas to life by blending authentic artistry with AI-powered production.
+    </p>
+
+    <!-- Structured Creative Pillars -->
+    <div class="about__pillars">
+      <div class="about__pillar">
+        <div class="pillar__tag">01 &bull; Human Expression</div>
+        <h4 class="pillar__title">Lyrics &amp; Melodies</h4>
+        <p class="pillar__desc">Penned and composed from genuine emotion, crafting narratives that reflect raw lived experience.</p>
+      </div>
+
+      <div class="about__pillar">
+        <div class="pillar__tag pillar__tag--cyan">02 &bull; Hybrid Architecture</div>
+        <h4 class="pillar__title">Intuition &times; AI Production</h4>
+        <p class="pillar__desc">Fusing handcrafted songwriting with advanced AI-driven sound engineering to manifest ideas without limits.</p>
+      </div>
+
+      <div class="about__pillar">
+        <div class="pillar__tag pillar__tag--acid">03 &bull; Genre Fluidity</div>
+        <h4 class="pillar__title">Sounds &amp; Stories</h4>
+        <p class="pillar__desc">Experimenting across textures, moods, and genres to create music that connects deeply with people.</p>
+      </div>
+    </div>
+
+    <p class="about__body about__body--sub">
+      From the subterranean weight of <em>Lost in Abyss</em> to the airborne synthwave of <em>Cloud 9</em> and the raw intensity of <em>Sinner</em>, every release is an exploration of sound, emotion, and connection.
+    </p>
+
+    <!-- Spotify Artist Quick-Stream Callout -->
+    <div class="about__spotify-bar">
+      <a href="https://open.spotify.com/artist/7rjJADLNKk5RKndDXQrWpA?si=xJf3Ml9JRKKuRA9f1UHmeQ" target="_blank" rel="noopener" class="spotify-badge-btn" title="Open Spotify Artist Page">
+        <div class="spotify-badge-btn__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+        </div>
+        <div class="spotify-badge-btn__info">
+          <span class="spotify-badge-btn__sub">Verified Artist Profile</span>
+          <span class="spotify-badge-btn__main">Listen to Rahul R. (tyzen01) on Spotify</span>
+        </div>
+        <span class="spotify-badge-btn__arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="about__stats">
+      <div class="stat">
+        <span class="stat__num" data-count="4">0</span>
+        <span class="stat__label">Projects</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-count="3">0</span>
+        <span class="stat__label">Full Albums</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-count="1">0</span>
+        <span class="stat__label">Singles Collection</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALBUMS / CHRONO DISCOGRAPHY TIMELINE -->
+<section class="chrono chrono--albums" id="albums" aria-labelledby="chronoTitle">
+  <div class="chrono__pin">
+    <canvas id="chronoStage" aria-hidden="true"></canvas>
+
+    <h2 class="chrono__title" id="chronoTitle">
+      <span>A</span>
+      <span>Journey</span>
+      <span>Through</span>
+      <span>Sound</span>
+      <em>The Discography</em>
+    </h2>
+
+    <p class="chrono__rail" aria-hidden="true">
+      <i></i>
+      <span>Lost in Abyss</span><span>Cloud 9</span>
+      <span>Sinner</span><span>Singles</span>
+      <i></i>
+    </p>
+
+    <p class="chrono__hint" aria-hidden="true">
+      Move cursor<br>to travel through<br>releases<i></i>
+    </p>
+    <p class="chrono__note chrono__note--bl" aria-hidden="true">
+      Original<br>compositions<br>turning thoughts<br>into sound
+    </p>
+    <p class="chrono__note chrono__note--br" aria-hidden="true">
+      Select album<br>to stream on<br>Spotify / YouTube<i></i>
+    </p>
+
+    <div class="chrono__deck" id="chronoDeck"></div>
+  </div>
+</section>
+
+<!-- CONNECT / CONTACT / FOOTER -->
+<section class="connect" id="contact">
+  <div id="connect" style="position: absolute; top: 0; left: 0;"></div>
+  <div class="connect__cover" style="background-image:url('cover.jpeg')"></div>
+  <div class="connect__overlay"></div>
+  <div class="connect__content">
+    <p class="section-label section-label--light">02 &mdash; Follow &amp; Connect</p>
+    <h2 class="connect__heading">Hear what's<br>coming next.</h2>
+    <div class="connect__actions">
+      <a href="https://open.spotify.com/artist/7rjJADLNKk5RKndDXQrWpA?si=xJf3Ml9JRKKuRA9f1UHmeQ" target="_blank" rel="noopener" class="btn btn--spotify btn--lg">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <span>Stream on Spotify</span>
+      </a>
+      <a href="https://www.youtube.com/@Tyzenn01" target="_blank" rel="noopener" class="btn btn--primary btn--lg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <span>Subscribe on YouTube</span>
+      </a>
+      <a href="mailto:rahulrr1453@gmail.com" class="btn btn--ghost btn--lg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Contact Me</span>
+      </a>
+    </div>
+  </div>
+  <footer class="footer" id="footer">
+    <span class="footer__logo">RAHUL R. &bull; tyzen<span>01</span></span>
+    <span class="footer__tag">Original Lyrics &bull; Melodies &bull; AI Production</span>
+    <span class="footer__year">&copy; 2026</span>
+  </footer>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="main.js"></script>
+<script src="chrono-albums.js"></script>
+</body>
+</html>
